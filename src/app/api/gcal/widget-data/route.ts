@@ -153,7 +153,7 @@ export async function POST(req: NextRequest) {
           label: e.summary,
           start: timeToHour(e.startTime),
           end: timeToHour(e.endTime),
-          colorLight: e.colorHex ? e.colorHex + '33' : colorLight,
+          colorLight: e.colorHex ? e.colorHex + '88' : colorLight,
           colorFilled: e.colorHex || colorFilled,
           textColor: '#666666',
         };
