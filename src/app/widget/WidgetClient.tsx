@@ -25,6 +25,7 @@ interface WidgetConfig {
   timeRange?: { startHour: number; endHour: number };
   containerStyle?: { backgroundColor?: string };
   miniTimerColor?: string;
+  nowLineColor?: string;
   timezone?: string;
   allowScroll?: boolean;
 }
@@ -53,6 +54,7 @@ function WidgetInner() {
   const [containerStyle, setContainerStyle] = useState<{ backgroundColor?: string }>({ backgroundColor: '#F8F7FA' });
   const [timeRange, setTimeRange] = useState({ startHour: 6, endHour: 26 });
   const [miniTimerColor, setMiniTimerColor] = useState('#2B2B2B');
+  const [nowLineColor, setNowLineColor] = useState('#FF6B9D');
   const [timezone, setTimezone] = useState(getDefaultTimezone());
   const [allowScroll, setAllowScroll] = useState(false);
 
@@ -92,6 +94,7 @@ function WidgetInner() {
       if (cfg.containerStyle) setContainerStyle(cfg.containerStyle);
       if (cfg.timeRange) setTimeRange(cfg.timeRange);
       if (cfg.miniTimerColor) setMiniTimerColor(cfg.miniTimerColor);
+      if (cfg.nowLineColor) setNowLineColor(cfg.nowLineColor);
       setTimezone(tz);
       setAllowScroll(!!cfg.allowScroll);
       fetchData(cfg, tz);
@@ -160,6 +163,7 @@ function WidgetInner() {
           containerStyle={containerStyle}
           timezone={timezone}
           allowScroll={allowScroll}
+          nowLineColor={nowLineColor}
         />
       </div>
     </div>

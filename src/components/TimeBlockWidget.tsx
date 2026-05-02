@@ -31,6 +31,7 @@ interface Props {
   containerStyle?: ContainerStyle;
   timezone?: string;
   allowScroll?: boolean;
+  nowLineColor?: string;
 }
 
 function getDayInfo(timezone = 'Asia/Seoul') {
@@ -48,6 +49,7 @@ export default function TimeBlockWidget({
   day, blocks, onDayChange, onRefresh,
   startHour = 6, endHour = 26,
   containerStyle, timezone, allowScroll = false,
+  nowLineColor = '${nowLineColor}',
 }: Props) {
   const tz = timezone || getBrowserTimezone();
   const [now, setNow] = useState(() => getHourFromDate(getCurrentTimeInTimezone(tz)));
@@ -210,10 +212,10 @@ export default function TimeBlockWidget({
 
           {/* Current time line */}
           {nowLineOffset !== null && (
-            <div style={{ position: 'absolute', top: `${PX_PER_HOUR * nowLineOffset}px`, left: 0, right: 0, height: '2px', backgroundColor: '#FF6B9D', zIndex: 5 }}>
-              <div style={{ width: '6px', height: '6px', borderRadius: '50%', backgroundColor: '#FF6B9D', position: 'absolute', left: '-3px', top: '-2px' }} />
-              <div style={{ width: '6px', height: '6px', borderRadius: '50%', backgroundColor: '#FF6B9D', position: 'absolute', right: '-3px', top: '-2px' }} />
-              <div style={{ position: 'absolute', top: '6px', right: '2px', fontSize: '10px', fontWeight: 600, color: '#FF6B9D', whiteSpace: 'nowrap', lineHeight: 1 }}>
+            <div style={{ position: 'absolute', top: `${PX_PER_HOUR * nowLineOffset}px`, left: 0, right: 0, height: '2px', backgroundColor: '${nowLineColor}', zIndex: 5 }}>
+              <div style={{ width: '6px', height: '6px', borderRadius: '50%', backgroundColor: '${nowLineColor}', position: 'absolute', left: '-3px', top: '-2px' }} />
+              <div style={{ width: '6px', height: '6px', borderRadius: '50%', backgroundColor: '${nowLineColor}', position: 'absolute', right: '-3px', top: '-2px' }} />
+              <div style={{ position: 'absolute', top: '6px', right: '2px', fontSize: '10px', fontWeight: 600, color: '${nowLineColor}', whiteSpace: 'nowrap', lineHeight: 1 }}>
                 {fmtClock(currentTime)}
               </div>
             </div>

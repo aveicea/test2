@@ -10,6 +10,7 @@ export default function SetupPage() {
   const [endHour, setEndHour] = useState(26);
   const [bgColor, setBgColor] = useState('rgba(252,252,252,1)');
   const [timerColor, setTimerColor] = useState('#737373');
+  const [nowLineColor, setNowLineColor] = useState('#FF6B9D');
   const [timezone, setTimezone] = useState('Asia/Seoul');
   const [allowScroll, setAllowScroll] = useState(false);
   const [result, setResult] = useState('');
@@ -29,6 +30,7 @@ export default function SetupPage() {
       timeRange: { startHour: Number(startHour), endHour: Number(endHour) },
       containerStyle: { backgroundColor: bgColor },
       miniTimerColor: timerColor,
+      nowLineColor,
       timezone,
       allowScroll,
     };
@@ -108,6 +110,14 @@ export default function SetupPage() {
         <div style={{ display: 'flex', gap: '8px', alignItems: 'center' }}>
           <input type="color" value={timerColor} onChange={e => setTimerColor(e.target.value)} style={{ width: '40px', height: '32px', border: '1px solid #ddd', borderRadius: '4px', cursor: 'pointer' }} />
           <input type="text" value={timerColor} onChange={e => setTimerColor(e.target.value)} style={{ ...inputStyle, flex: 1 }} />
+        </div>
+      </div>
+
+      <div style={fieldStyle}>
+        <label style={labelStyle}>현재 시간선 색상</label>
+        <div style={{ display: 'flex', gap: '8px', alignItems: 'center' }}>
+          <input type="color" value={nowLineColor} onChange={e => setNowLineColor(e.target.value)} style={{ width: '40px', height: '32px', border: '1px solid #ddd', borderRadius: '4px', cursor: 'pointer' }} />
+          <input type="text" value={nowLineColor} onChange={e => setNowLineColor(e.target.value)} style={{ ...inputStyle, flex: 1 }} />
         </div>
       </div>
 
