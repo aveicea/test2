@@ -5,6 +5,7 @@ html, body {
   padding: 0;
   width: 100%;
   background: transparent;
+  overflow-x: hidden;
 }
 
 .widget-container {
