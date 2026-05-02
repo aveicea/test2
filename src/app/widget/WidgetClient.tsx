@@ -113,7 +113,12 @@ function WidgetInner() {
         setLoading(false);
       }
     } else {
-      loadFromStorage();
+      const saved = safeStorage.getItem('gcal-widget-config');
+      if (saved) {
+        loadFromStorage();
+      } else {
+        setLoading(false);
+      }
     }
   }, [configParam]);
 
