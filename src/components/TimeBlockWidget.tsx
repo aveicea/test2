@@ -230,10 +230,6 @@ export default function TimeBlockWidget({
         </button>
       )}
 
-      {/* Branding */}
-      <div style={{ position: 'absolute', bottom: '10px', left: '50%', transform: 'translateX(-50%)', fontSize: '7px', fontWeight: 700, color: '#CCCCCC', letterSpacing: '1.5px', opacity: 0.6, whiteSpace: 'nowrap' }}>
-        SOMLUTION
-      </div>
     </div>
   );
 }
