@@ -66,16 +66,16 @@ export default function MiniTimer({ blocks, width, timerColor = '#2B2B2B', timez
           {info.label}
         </div>
         {(info.hourPart || info.minutePart) ? (
-          <div style={{ display: 'flex', alignItems: 'baseline', gap: '3px' }}>
-            <span style={{ fontSize: '18px', fontWeight: 700, color: timerColor, opacity: 0.5, lineHeight: 1, paddingBottom: '2px' }}>-</span>
+          <div style={{ display: 'flex', alignItems: 'baseline', gap: '1px' }}>
+            <span style={{ fontSize: '14px', fontWeight: 700, color: timerColor, opacity: 0.5, lineHeight: 1, marginRight: '1px' }}>-</span>
             {info.hasHours && (
               <>
-                <span style={{ fontSize: info.type === 'now' ? '26px' : '24px', fontWeight: 800, color: timerColor, letterSpacing: '-1px', lineHeight: 1, fontVariantNumeric: 'tabular-nums' }}>{info.hourPart}</span>
-                <span style={{ fontSize: '11px', fontWeight: 700, color: timerColor, opacity: 0.6, letterSpacing: '0.3px', paddingBottom: '3px' }}>H</span>
+                <span style={{ fontSize: '22px', fontWeight: 800, color: timerColor, letterSpacing: '-0.5px', lineHeight: 1, fontVariantNumeric: 'tabular-nums' }}>{info.hourPart}</span>
+                <span style={{ fontSize: '10px', fontWeight: 700, color: timerColor, opacity: 0.6, marginBottom: '2px', marginRight: '2px' }}>H</span>
               </>
             )}
-            <span style={{ fontSize: info.type === 'now' ? '26px' : '24px', fontWeight: 800, color: timerColor, letterSpacing: '-1px', lineHeight: 1, fontVariantNumeric: 'tabular-nums' }}>{info.minutePart}</span>
-            <span style={{ fontSize: '11px', fontWeight: 700, color: timerColor, opacity: 0.6, letterSpacing: '0.3px', paddingBottom: '3px' }}>M</span>
+            <span style={{ fontSize: '22px', fontWeight: 800, color: timerColor, letterSpacing: '-0.5px', lineHeight: 1, fontVariantNumeric: 'tabular-nums' }}>{info.minutePart}</span>
+            <span style={{ fontSize: '10px', fontWeight: 700, color: timerColor, opacity: 0.6, marginBottom: '2px' }}>M</span>
           </div>
         ) : (
           <div style={{ fontSize: '13px', fontWeight: 600, color: '#CCCCCC', marginTop: '4px', textAlign: 'center', width: '100%' }}>All clear</div>
