@@ -73,6 +73,7 @@ function parseIcal(text: string, timezone: string, todayStr: string): IcalEvent[
   const events: IcalEvent[] = [];
   let cur: Record<string, string> = {};
   let inEvent = false;
+  let calendarColor: string | undefined;
 
   for (const line of lines) {
     if (line === 'BEGIN:VEVENT') { inEvent = true; cur = {}; continue; }
@@ -87,19 +88,23 @@ function parseIcal(text: string, timezone: string, todayStr: string): IcalEvent[
             date: start.date,
             startTime: start.time,
             endTime: end.time,
-            colorHex: cur['X-APPLE-CALENDAR-COLOR'] || undefined,
+            colorHex: calendarColor,
           });
         }
       }
       continue;
     }
-    if (!inEvent) continue;
     const colon = line.indexOf(':');
     if (colon < 0) continue;
     const rawKey = line.slice(0, colon);
     const key = rawKey.split(';')[0];
     const val = line.slice(colon + 1);
-    // DTSTART/DTEND may have TZID param
+
+    if (!inEvent) {
+      // VCALENDAR 레벨에서 캘린더 전체 색상 읽기
+      if (key === 'X-APPLE-CALENDAR-COLOR') calendarColor = val.trim();
+      continue;
+    }
     if (rawKey.startsWith('DTSTART')) cur['DTSTART'] = val;
     else if (rawKey.startsWith('DTEND')) cur['DTEND'] = val;
     else cur[key] = val;
