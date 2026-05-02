@@ -3,7 +3,7 @@
 import { useState } from 'react';
 
 export default function SetupPage() {
-  const [icalUrl, setIcalUrl] = useState('');
+  const [icalUrls, setIcalUrls] = useState(['']);
   const [startHour, setStartHour] = useState(9);
   const [endHour, setEndHour] = useState(26);
   const [bgColor, setBgColor] = useState('rgba(252,252,252,1)');
@@ -13,9 +13,10 @@ export default function SetupPage() {
   const [result, setResult] = useState('');
 
   const generate = () => {
-    if (!icalUrl.trim()) { alert('iCal URL을 입력하세요'); return; }
+    const filtered = icalUrls.map(u => u.trim()).filter(Boolean);
+    if (filtered.length === 0) { alert('iCal URL을 하나 이상 입력하세요'); return; }
     const config = {
-      icalUrl: icalUrl.trim(),
+      icalUrls: filtered,
       timeRange: { startHour: Number(startHour), endHour: Number(endHour) },
       containerStyle: { backgroundColor: bgColor },
       miniTimerColor: timerColor,
@@ -32,14 +33,32 @@ export default function SetupPage() {
       <h2 style={{ fontSize: '18px', fontWeight: 700, marginBottom: '24px' }}>타임블록 위젯 설정</h2>
 
       <div style={fieldStyle}>
-        <label style={labelStyle}>구글 캘린더 iCal URL *</label>
-        <textarea
-          value={icalUrl}
-          onChange={e => setIcalUrl(e.target.value)}
-          placeholder="https://calendar.google.com/calendar/ical/.../basic.ics"
-          rows={3}
-          style={inputStyle}
-        />
+        <label style={labelStyle}>구글 캘린더 iCal URL * (여러 개 추가 가능)</label>
+        {icalUrls.map((url, i) => (
+          <div key={i} style={{ display: 'flex', gap: '6px', marginBottom: '6px', alignItems: 'center' }}>
+            <input
+              type="text"
+              value={url}
+              onChange={e => {
+                const next = [...icalUrls];
+                next[i] = e.target.value;
+                setIcalUrls(next);
+              }}
+              placeholder="https://calendar.google.com/calendar/ical/.../basic.ics"
+              style={{ ...inputStyle, marginBottom: 0 }}
+            />
+            {icalUrls.length > 1 && (
+              <button
+                onClick={() => setIcalUrls(icalUrls.filter((_, j) => j !== i))}
+                style={{ flexShrink: 0, padding: '6px 10px', background: 'none', border: '1px solid #ddd', borderRadius: '6px', cursor: 'pointer', fontSize: '13px', color: '#999' }}
+              >✕</button>
+            )}
+          </div>
+        ))}
+        <button
+          onClick={() => setIcalUrls([...icalUrls, ''])}
+          style={{ padding: '6px 12px', background: 'none', border: '1px dashed #bbb', borderRadius: '6px', cursor: 'pointer', fontSize: '12px', color: '#666', marginTop: '2px' }}
+        >+ 캘린더 추가</button>
         <div style={helpStyle}>구글 캘린더 → 설정 → 캘린더 설정 → "비공개 주소(iCal)" 복사</div>
       </div>
 

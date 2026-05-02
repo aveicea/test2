@@ -17,7 +17,8 @@ interface Block {
 }
 
 interface WidgetConfig {
-  icalUrl?: string;
+  icalUrls?: string[];
+  icalUrl?: string; // legacy
   apiKey?: string;
   calendarId?: string;
   timeRange?: { startHour: number; endHour: number };
@@ -58,11 +59,12 @@ function WidgetInner() {
     try {
       setLoading(true);
       setError('');
+      const icalUrls = config.icalUrls ?? (config.icalUrl ? [config.icalUrl] : undefined);
       const res = await fetch('/api/gcal/widget-data', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
-          icalUrl: config.icalUrl,
+          icalUrls,
           apiKey: config.apiKey,
           calendarId: config.calendarId,
           timezone: tz,

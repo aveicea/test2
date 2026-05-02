@@ -117,23 +117,29 @@ function timeToHour(t: string): number {
 export async function POST(req: NextRequest) {
   try {
     const body = await req.json();
-    const { icalUrl, apiKey, calendarId, timezone = 'Asia/Seoul' } = body;
+    const { icalUrls, icalUrl, apiKey, calendarId, timezone = 'Asia/Seoul' } = body;
+    const urls: string[] = icalUrls ?? (icalUrl ? [icalUrl] : []);
 
     const today = getTodayString(timezone);
     const day = getDayOfWeek(timezone);
 
     // ── iCal 방식 ──
-    if (icalUrl) {
-      const res = await fetch(icalUrl, {
-        headers: { 'User-Agent': 'CalendarWidget/1.0', Accept: 'text/calendar' },
-        signal: AbortSignal.timeout(15000),
-      });
-      if (!res.ok) return NextResponse.json({ error: `iCal fetch 실패: ${res.status}` }, { status: 502 });
-      const text = await res.text();
-      if (!text.includes('BEGIN:VCALENDAR')) return NextResponse.json({ error: '유효하지 않은 iCal 데이터' }, { status: 422 });
+    if (urls.length > 0) {
+      const results = await Promise.all(urls.map(async (url) => {
+        const res = await fetch(url, {
+          headers: { 'User-Agent': 'CalendarWidget/1.0', Accept: 'text/calendar' },
+          signal: AbortSignal.timeout(15000),
+        });
+        if (!res.ok) throw new Error(`iCal fetch 실패: ${res.status}`);
+        const text = await res.text();
+        if (!text.includes('BEGIN:VCALENDAR')) throw new Error('유효하지 않은 iCal 데이터');
+        return parseIcal(text, timezone, today);
+      }));
 
-      const parsed = parseIcal(text, timezone, today);
-      const blocks = parsed.map(e => {
+      const allEvents = results.flat();
+      allEvents.sort((a, b) => timeToHour(a.startTime) - timeToHour(b.startTime));
+
+      const blocks = allEvents.map(e => {
         const [colorLight, colorFilled] = GCAL_COLORS.default;
         return {
           label: e.summary,
