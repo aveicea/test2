@@ -230,7 +230,6 @@ export default function TimeBlockWidget({
         </button>
       )}
 
-      </div>
     </div>
   );
 }
