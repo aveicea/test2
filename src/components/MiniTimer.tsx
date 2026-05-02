@@ -78,7 +78,7 @@ export default function MiniTimer({ blocks, width, timerColor = '#2B2B2B', timez
             <span style={{ fontSize: '11px', fontWeight: 700, color: timerColor, opacity: 0.6, letterSpacing: '0.3px', paddingBottom: '3px' }}>M</span>
           </div>
         ) : (
-          <div style={{ fontSize: '13px', fontWeight: 600, color: '#CCCCCC', marginTop: '4px' }}>All clear</div>
+          <div style={{ fontSize: '13px', fontWeight: 600, color: '#CCCCCC', marginTop: '4px', textAlign: 'center', width: '100%' }}>All clear</div>
         )}
       </div>
     </div>
