@@ -2,8 +2,10 @@
 
 import { useState } from 'react';
 
+const PRESET_COLORS = ['#4285F4', '#0B8043', '#8E24AA', '#E67C73', '#F6BF26', '#F4511E', '#039BE5', '#3F51B5', '#33B679', '#D50000'];
+
 export default function SetupPage() {
-  const [icalUrls, setIcalUrls] = useState(['']);
+  const [calendars, setCalendars] = useState([{ url: '', color: '#4285F4' }]);
   const [startHour, setStartHour] = useState(9);
   const [endHour, setEndHour] = useState(26);
   const [bgColor, setBgColor] = useState('rgba(252,252,252,1)');
@@ -12,11 +14,18 @@ export default function SetupPage() {
   const [allowScroll, setAllowScroll] = useState(false);
   const [result, setResult] = useState('');
 
+  const updateCalendar = (i: number, field: 'url' | 'color', val: string) => {
+    const next = [...calendars];
+    next[i] = { ...next[i], [field]: val };
+    setCalendars(next);
+  };
+
   const generate = () => {
-    const filtered = icalUrls.map(u => u.trim()).filter(Boolean);
+    const filtered = calendars.filter(c => c.url.trim());
     if (filtered.length === 0) { alert('iCal URL을 하나 이상 입력하세요'); return; }
     const config = {
-      icalUrls: filtered,
+      icalUrls: filtered.map(c => c.url.trim()),
+      calendarColors: filtered.map(c => c.color),
       timeRange: { startHour: Number(startHour), endHour: Number(endHour) },
       containerStyle: { backgroundColor: bgColor },
       miniTimerColor: timerColor,
@@ -24,8 +33,7 @@ export default function SetupPage() {
       allowScroll,
     };
     const encoded = btoa(unescape(encodeURIComponent(JSON.stringify(config))));
-    const origin = window.location.origin;
-    setResult(`${origin}/widget?config=${encoded}`);
+    setResult(`${window.location.origin}/widget?config=${encoded}`);
   };
 
   return (
@@ -34,29 +42,43 @@ export default function SetupPage() {
 
       <div style={fieldStyle}>
         <label style={labelStyle}>구글 캘린더 iCal URL * (여러 개 추가 가능)</label>
-        {icalUrls.map((url, i) => (
-          <div key={i} style={{ display: 'flex', gap: '6px', marginBottom: '6px', alignItems: 'center' }}>
-            <input
-              type="text"
-              value={url}
-              onChange={e => {
-                const next = [...icalUrls];
-                next[i] = e.target.value;
-                setIcalUrls(next);
-              }}
-              placeholder="https://calendar.google.com/calendar/ical/.../basic.ics"
-              style={{ ...inputStyle, marginBottom: 0 }}
-            />
-            {icalUrls.length > 1 && (
-              <button
-                onClick={() => setIcalUrls(icalUrls.filter((_, j) => j !== i))}
-                style={{ flexShrink: 0, padding: '6px 10px', background: 'none', border: '1px solid #ddd', borderRadius: '6px', cursor: 'pointer', fontSize: '13px', color: '#999' }}
-              >✕</button>
-            )}
+        {calendars.map((cal, i) => (
+          <div key={i} style={{ marginBottom: '10px', padding: '10px', border: '1px solid #eee', borderRadius: '8px' }}>
+            <div style={{ display: 'flex', gap: '6px', marginBottom: '8px', alignItems: 'center' }}>
+              <input
+                type="text"
+                value={cal.url}
+                onChange={e => updateCalendar(i, 'url', e.target.value)}
+                placeholder="https://calendar.google.com/calendar/ical/.../basic.ics"
+                style={{ ...inputStyle, marginBottom: 0, flex: 1 }}
+              />
+              {calendars.length > 1 && (
+                <button
+                  onClick={() => setCalendars(calendars.filter((_, j) => j !== i))}
+                  style={{ flexShrink: 0, padding: '6px 10px', background: 'none', border: '1px solid #ddd', borderRadius: '6px', cursor: 'pointer', fontSize: '13px', color: '#999' }}
+                >✕</button>
+              )}
+            </div>
+            <div style={{ display: 'flex', gap: '6px', alignItems: 'center', flexWrap: 'wrap' }}>
+              <span style={{ fontSize: '11px', color: '#999' }}>색상:</span>
+              {PRESET_COLORS.map(c => (
+                <button
+                  key={c}
+                  onClick={() => updateCalendar(i, 'color', c)}
+                  style={{ width: '18px', height: '18px', borderRadius: '50%', backgroundColor: c, border: cal.color === c ? '2px solid #333' : '2px solid transparent', cursor: 'pointer', padding: 0, flexShrink: 0 }}
+                />
+              ))}
+              <input
+                type="color"
+                value={cal.color}
+                onChange={e => updateCalendar(i, 'color', e.target.value)}
+                style={{ width: '28px', height: '28px', border: '1px solid #ddd', borderRadius: '4px', cursor: 'pointer', padding: '1px' }}
+              />
+            </div>
           </div>
         ))}
         <button
-          onClick={() => setIcalUrls([...icalUrls, ''])}
+          onClick={() => setCalendars([...calendars, { url: '', color: PRESET_COLORS[calendars.length % PRESET_COLORS.length] }])}
           style={{ padding: '6px 12px', background: 'none', border: '1px dashed #bbb', borderRadius: '6px', cursor: 'pointer', fontSize: '12px', color: '#666', marginTop: '2px' }}
         >+ 캘린더 추가</button>
         <div style={helpStyle}>구글 캘린더 → 설정 → 캘린더 설정 → "비공개 주소(iCal)" 복사</div>

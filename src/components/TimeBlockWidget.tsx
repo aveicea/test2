@@ -71,7 +71,8 @@ export default function TimeBlockWidget({
 
   const totalHours = getTotalHours(startHour, endHour);
   const hourRange = getHourRange(startHour, endHour);
-  const timelineHeight = 40 * totalHours;
+  const PX_PER_HOUR = 32;
+  const timelineHeight = PX_PER_HOUR * totalHours;
 
   const visibleBlocks = useMemo(() => blocks.filter(b => {
     if (!b.colorLight || !b.colorFilled || !b.label) return false;
@@ -107,7 +108,7 @@ export default function TimeBlockWidget({
         flexShrink: 0,
         backgroundColor: containerStyle?.backgroundColor || '#FFFFFF',
         borderRadius: '20px',
-        padding: '18px 8px 40px 8px',
+        padding: '14px 8px 20px 8px',
         boxShadow: 'none',
         fontFamily: "Pretendard, -apple-system, BlinkMacSystemFont, system-ui, sans-serif",
         position: 'relative',
@@ -123,7 +124,7 @@ export default function TimeBlockWidget({
         <div style={{ position: 'relative', height: `${timelineHeight}px` }}>
           {/* Hour labels */}
           {hourRange.map((h, i) => (
-            <div key={`h-${h}-${i}`} style={{ position: 'absolute', top: `${40 * i + 2}px`, left: '2px', fontSize: '8px', color: '#AAAAAA', fontWeight: 400, pointerEvents: 'none', zIndex: 1 }}>
+            <div key={`h-${h}-${i}`} style={{ position: 'absolute', top: `${PX_PER_HOUR * i + 2}px`, left: '2px', fontSize: '8px', color: '#AAAAAA', fontWeight: 400, pointerEvents: 'none', zIndex: 1 }}>
               {h === 0 ? '12' : h > 12 ? h - 12 : h}
             </div>
           ))}
@@ -138,8 +139,8 @@ export default function TimeBlockWidget({
             if (s < startHour && !(endHour > 24 && s < startHour)) {
               clipped = duration - (startHour - s);
             }
-            const top = 40 * topOffset + 2;
-            let height = 40 * clipped - 4;
+            const top = PX_PER_HOUR * topOffset + 2;
+            let height = PX_PER_HOUR * clipped - 4;
             if (top >= timelineHeight) return null;
             if (top + height > timelineHeight) height = timelineHeight - top - 2;
             if (height <= 0) return null;
@@ -199,7 +200,7 @@ export default function TimeBlockWidget({
             let topOffset = tooltip.start - startHour;
             if (topOffset < 0) topOffset += 24;
             const dur = getHourDifference(tooltip.end, tooltip.start);
-            const top = 40 * topOffset + 2 + (40 * dur - 4) / 2;
+            const top = PX_PER_HOUR * topOffset + 2 + (PX_PER_HOUR * dur - 4) / 2;
             return (
               <div style={{ position: 'absolute', top: `${top}px`, left: '50%', transform: 'translate(-50%, -50%)', backgroundColor: tooltip.colorFilled, color: '#4A4A4A', fontSize: '9px', fontWeight: 600, padding: '6px 10px', borderRadius: '8px', whiteSpace: 'nowrap', zIndex: 30, boxShadow: '0 2px 12px rgba(0,0,0,0.2)', pointerEvents: 'none' }}>
                 {`${Math.floor(tooltip.start)}:${Math.round(tooltip.start % 1 * 60).toString().padStart(2, '0')} - ${Math.floor(tooltip.end)}:${Math.round(tooltip.end % 1 * 60).toString().padStart(2, '0')}`}
@@ -209,7 +210,7 @@ export default function TimeBlockWidget({
 
           {/* Current time line */}
           {nowLineOffset !== null && (
-            <div style={{ position: 'absolute', top: `${40 * nowLineOffset}px`, left: 0, right: 0, height: '2px', backgroundColor: '#FF6B9D', zIndex: 5 }}>
+            <div style={{ position: 'absolute', top: `${PX_PER_HOUR * nowLineOffset}px`, left: 0, right: 0, height: '2px', backgroundColor: '#FF6B9D', zIndex: 5 }}>
               <div style={{ width: '6px', height: '6px', borderRadius: '50%', backgroundColor: '#FF6B9D', position: 'absolute', left: '-3px', top: '-2px' }} />
               <div style={{ width: '6px', height: '6px', borderRadius: '50%', backgroundColor: '#FF6B9D', position: 'absolute', right: '-3px', top: '-2px' }} />
               <div style={{ position: 'absolute', top: '6px', right: '2px', fontSize: '10px', fontWeight: 600, color: '#FF6B9D', whiteSpace: 'nowrap', lineHeight: 1 }}>

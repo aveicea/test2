@@ -122,7 +122,7 @@ function timeToHour(t: string): number {
 export async function POST(req: NextRequest) {
   try {
     const body = await req.json();
-    const { icalUrls, icalUrl, apiKey, calendarId, timezone = 'Asia/Seoul' } = body;
+    const { icalUrls, icalUrl, calendarColors, apiKey, calendarId, timezone = 'Asia/Seoul' } = body;
     const urls: string[] = icalUrls ?? (icalUrl ? [icalUrl] : []);
 
     const today = getTodayString(timezone);
@@ -130,7 +130,7 @@ export async function POST(req: NextRequest) {
 
     // ── iCal 방식 ──
     if (urls.length > 0) {
-      const results = await Promise.all(urls.map(async (url) => {
+      const results = await Promise.all(urls.map(async (url, idx) => {
         const res = await fetch(url, {
           headers: { 'User-Agent': 'CalendarWidget/1.0', Accept: 'text/calendar' },
           signal: AbortSignal.timeout(15000),
@@ -138,7 +138,10 @@ export async function POST(req: NextRequest) {
         if (!res.ok) throw new Error(`iCal fetch 실패: ${res.status}`);
         const text = await res.text();
         if (!text.includes('BEGIN:VCALENDAR')) throw new Error('유효하지 않은 iCal 데이터');
-        return parseIcal(text, timezone, today);
+        const events = parseIcal(text, timezone, today);
+        // 사용자가 지정한 색상 우선, 없으면 iCal 캘린더 색상
+        const userColor: string | undefined = calendarColors?.[idx];
+        return events.map(e => ({ ...e, colorHex: userColor ?? e.colorHex }));
       }));
 
       const allEvents = results.flat();
@@ -150,7 +153,7 @@ export async function POST(req: NextRequest) {
           label: e.summary,
           start: timeToHour(e.startTime),
           end: timeToHour(e.endTime),
-          colorLight: e.colorHex ? e.colorHex + '55' : colorLight,
+          colorLight: e.colorHex ? e.colorHex + '33' : colorLight,
           colorFilled: e.colorHex || colorFilled,
           textColor: '#666666',
         };
