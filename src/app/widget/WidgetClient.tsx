@@ -19,6 +19,7 @@ interface Block {
 interface WidgetConfig {
   icalUrls?: string[];
   icalUrl?: string; // legacy
+  calendarColors?: string[];
   apiKey?: string;
   calendarId?: string;
   timeRange?: { startHour: number; endHour: number };
@@ -65,6 +66,7 @@ function WidgetInner() {
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
           icalUrls,
+          calendarColors: config.calendarColors,
           apiKey: config.apiKey,
           calendarId: config.calendarId,
           timezone: tz,
