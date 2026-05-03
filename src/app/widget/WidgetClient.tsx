@@ -111,6 +111,7 @@ function WidgetInner() {
         if (cfg.containerStyle) setContainerStyle(cfg.containerStyle);
         if (cfg.timeRange) setTimeRange(cfg.timeRange);
         if (cfg.miniTimerColor) setMiniTimerColor(cfg.miniTimerColor);
+        if (cfg.nowLineColor) setNowLineColor(cfg.nowLineColor);
         setTimezone(tz);
         setAllowScroll(!!cfg.allowScroll);
         safeStorage.setItem('gcal-widget-config', JSON.stringify({ ...cfg, timezone: tz }));

@@ -14,6 +14,30 @@ export default function SetupPage() {
   const [timezone, setTimezone] = useState('Asia/Seoul');
   const [allowScroll, setAllowScroll] = useState(false);
   const [result, setResult] = useState('');
+  const [loadUrl, setLoadUrl] = useState('');
+
+  const loadFromUrl = () => {
+    try {
+      const raw = loadUrl.trim();
+      const configParam = raw.includes('?config=')
+        ? raw.split('?config=')[1].split('&')[0]
+        : raw;
+      const b64 = configParam.replace(/-/g, '+').replace(/_/g, '/');
+      const cfg = JSON.parse(decodeURIComponent(escape(atob(b64))));
+      const urls: string[] = cfg.icalUrls ?? (cfg.icalUrl ? [cfg.icalUrl] : []);
+      const colors: string[] = cfg.calendarColors ?? urls.map((_: string, i: number) => PRESET_COLORS[i % PRESET_COLORS.length]);
+      setCalendars(urls.map((url: string, i: number) => ({ url, color: colors[i] ?? '#4285F4' })));
+      if (cfg.timeRange) { setStartHour(cfg.timeRange.startHour); setEndHour(cfg.timeRange.endHour); }
+      if (cfg.containerStyle?.backgroundColor) setBgColor(cfg.containerStyle.backgroundColor);
+      if (cfg.miniTimerColor) setTimerColor(cfg.miniTimerColor);
+      if (cfg.nowLineColor) setNowLineColor(cfg.nowLineColor);
+      if (cfg.timezone) setTimezone(cfg.timezone);
+      if (cfg.allowScroll !== undefined) setAllowScroll(cfg.allowScroll);
+      setLoadUrl('');
+    } catch {
+      alert('URL을 읽을 수 없습니다. 위젯 URL을 그대로 붙여넣어 주세요.');
+    }
+  };
 
   const updateCalendar = (i: number, field: 'url' | 'color', val: string) => {
     const next = [...calendars];
@@ -41,6 +65,24 @@ export default function SetupPage() {
   return (
     <div style={{ fontFamily: 'sans-serif', maxWidth: '500px', margin: '40px auto', padding: '0 20px' }}>
       <h2 style={{ fontSize: '18px', fontWeight: 700, marginBottom: '24px' }}>타임블록 위젯 설정</h2>
+
+      <div style={{ ...fieldStyle, background: '#f8f8f8', borderRadius: '8px', padding: '12px' }}>
+        <label style={labelStyle}>기존 위젯 URL 불러오기 (선택)</label>
+        <div style={{ display: 'flex', gap: '8px' }}>
+          <input
+            type="text"
+            value={loadUrl}
+            onChange={e => setLoadUrl(e.target.value)}
+            placeholder="https://.../widget?config=..."
+            style={{ ...inputStyle, flex: 1, marginBottom: 0 }}
+          />
+          <button
+            onClick={loadFromUrl}
+            disabled={!loadUrl.trim()}
+            style={{ flexShrink: 0, padding: '8px 14px', backgroundColor: loadUrl.trim() ? '#555' : '#ccc', color: 'white', border: 'none', borderRadius: '6px', fontSize: '13px', cursor: loadUrl.trim() ? 'pointer' : 'default' }}
+          >불러오기</button>
+        </div>
+      </div>
 
       <div style={fieldStyle}>
         <label style={labelStyle}>구글 캘린더 iCal URL * (여러 개 추가 가능)</label>
